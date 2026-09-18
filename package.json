@@ -1,6 +1,6 @@
 {
   "name": "vctrfx-cli",
-  "version": "0.8.0",
+  "version": "0.10.0",
   "description": "Apply post-processing effects to any SVG from the terminal. Scanlines, bloom, glitch, halftone and more.",
   "main": "./dist/cli.js",
   "types": "./dist/cli.d.ts",
@@ -49,7 +49,7 @@
   },
   "dependencies": {
     "grfti": "^0.2.0",
-    "vctrfx": "^0.8.0",
+    "vctrfx": "^0.10.0",
     "yargs": "^17.7.2"
   },
   "devDependencies": {
