@@ -2,9 +2,9 @@
 
 # vctrfx-cli
 
-`vctrfx logo.svg -p crt`
+`vctrfx logo.svg -p crt -e 'glitch:animate'`
 
-<img src="https://raw.githubusercontent.com/tool3/vctrfx-cli/master/examples/svgs/crt.svg" width="420" alt="crt preset">
+<img src="https://shellfied.vercel.app/s/n5ZAVlx.svg" width="420" alt="crt preset">
 
 ### Post-processing effects for any SVG, straight from your shell.
 
