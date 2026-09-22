@@ -12,6 +12,11 @@ export interface EffectSpec {
   readonly options: Record<string, unknown>
 }
 
+export interface Motion {
+  readonly all: boolean
+  readonly except: readonly string[]
+}
+
 export type InputKind = 'file' | 'stdin' | 'url'
 
 export interface Input {
@@ -34,6 +39,7 @@ export interface CliOptions {
   readonly scope?: string
   readonly clip: 'shape' | 'none'
   readonly animate: boolean
+  readonly noAnimate?: readonly string[]
   readonly format: OutputFormat
   readonly quiet: boolean
 }

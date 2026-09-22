@@ -4,17 +4,19 @@ import { createPipeline, toDataUri } from 'vctrfx'
 import { collect } from '../input'
 import { destination, write } from '../output'
 import { toSettings } from '../settings'
-import { fromConfig, toEffect } from '../spec'
+import { toMotion, withMotion } from '../motion'
+import { build, parseSpec, readConfig } from '../spec'
 import type { CliOptions } from '../types'
 import type { Effect } from 'vctrfx'
 
-const gather = (options: CliOptions): readonly Effect[] => [
-  ...(options.config === undefined
-    ? []
-    : fromConfig(readFileSync(options.config, 'utf8'), options.config)),
-  ...options.preset.map(toEffect),
-  ...options.effect.map(toEffect),
-]
+const gather = (options: CliOptions): readonly Effect[] => {
+  const specs = [
+    ...(options.config === undefined ? [] : readConfig(readFileSync(options.config, 'utf8'), options.config)),
+    ...options.preset.map(parseSpec),
+    ...options.effect.map(parseSpec),
+  ]
+  return withMotion(specs, toMotion(options.animate, options.noAnimate)).map(build)
+}
 
 const display = (target: string): string => {
   const nearby = relative(process.cwd(), target)

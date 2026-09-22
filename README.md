@@ -158,6 +158,20 @@ vctrfx logo.svg -p "riso:shadow=#2b3a67,highlight=#ff5a5f"
 vctrfx logo.svg -p "crt:animate=true"
 ```
 
+### Animation
+
+`grain`, `scanlines`, `glitch` and `wave` can move. `-a` switches on every one of them inside
+the presets you apply. Inline effects are explicit, so each opts in on its own:
+
+```bash
+vctrfx logo.svg -p vhs -a                                  # wave, grain and scanlines all move
+vctrfx logo.svg -p vhs -a --no-animate "scanlines,grain"   # only the wave moves
+vctrfx logo.svg -p crt -e grain:animate                    # still crt, moving grain
+vctrfx logo.svg -p "crt:animate" --no-animate              # a still frame, whatever asked to move
+```
+
+An explicit nested option such as `crt:scanlines.animate=false` always wins over the flags.
+
 ### Tuning what's inside a preset
 
 A preset is a stack of effects. Reach any one of them with a dot, and the rest of the
@@ -191,7 +205,8 @@ Error: "film" has no option "scanlines". Valid: contrast, bloom, grain, vignette
 | `-s`, `--seed` | `vctrfx` | Seed for every random decision |
 | `--prefix` | `vctrfx` | Prefix for generated ids |
 | `--scope` | auto | Id namespace, defaults to a hash of the input and effects |
-| `-a`, `--animate` | `true` | Allow animation. `--no-animate` for a still frame |
+| `-a`, `--animate` | `false` | Animate every animatable effect inside the presets |
+| `--no-animate` | | Comma separated effects to keep still. Bare, forces a still frame |
 | `-f`, `--format` | `preserve` | `preserve`, `pretty` or `minify` |
 | `-q`, `--quiet` | `false` | Do not report written files |
 

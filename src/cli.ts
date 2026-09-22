@@ -9,6 +9,7 @@ import type { CliOptions } from './types'
 
 const createParser = () =>
   yargs(hideBin(process.argv))
+    .parserConfiguration({ 'boolean-negation': false })
     .scriptName('vctrfx')
     .usage('Usage: $0 [input...] [options]')
     .example('$0 logo.svg -e bloom', 'Apply one effect, print to stdout')
@@ -20,6 +21,8 @@ const createParser = () =>
     .example('$0 https://example.com/logo.svg -p neon', 'Fetch and process a remote SVG')
     .example('$0 logo.svg -e "bloom:radius=8" -e "scanlines:gap=3"', 'Stack effects with options, in order')
     .example('$0 logo.svg -p crt --data-uri', 'Emit a data: URI for CSS or HTML')
+    .example('$0 logo.svg -p vhs -a', 'Animate everything in a preset that can move')
+    .example('$0 logo.svg -p crt -a --no-animate scanlines', 'Animate a preset but keep some effects still')
     .example('$0 logo.svg -c effects.json', 'Read the effect stack from JSON')
     .example('$0 card.svg -p crt --clip none', 'Let effects spill past a rounded frame')
     .example('$0 list', 'List every effect and preset')
@@ -88,8 +91,18 @@ const createParser = () =>
     .option('animate', {
       alias: 'a',
       type: 'boolean',
-      description: 'Allow effects to emit animation. Use --no-animate for a still frame',
-      default: true,
+      description: 'Animate every animatable effect inside the presets. Inline effects opt in with name:animate',
+      default: false,
+    })
+    .option('no-animate', {
+      type: 'string',
+      description: 'Comma separated effects to keep still, e.g. "scanlines,grain". Bare, it forces a still frame',
+      coerce: (raw: string | readonly string[]): readonly string[] =>
+        [raw]
+          .flat()
+          .flatMap((value) => value.split(','))
+          .map((name) => name.trim())
+          .filter((name) => name.length > 0),
     })
     .option('format', {
       alias: 'f',

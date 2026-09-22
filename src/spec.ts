@@ -111,24 +111,27 @@ export const parseSpec = (raw: string): EffectSpec => {
   return { name, options }
 }
 
-export const toEffect = (raw: string): Effect => {
-  const spec = parseSpec(raw)
+export const build = (spec: EffectSpec): Effect => {
   const meta = resolve(spec.name)
   if (meta === null) throw new Error(`Unknown effect "${spec.name}".`)
   return meta.create(spec.options)
 }
 
-export const fromConfig = (contents: string, origin: string): readonly Effect[] => {
+export const toEffect = (raw: string): Effect => build(parseSpec(raw))
+
+export const readConfig = (contents: string, origin: string): readonly EffectSpec[] => {
   const parsed: unknown = JSON.parse(contents)
   const list = Array.isArray(parsed) ? parsed : (parsed as { effects?: unknown }).effects
   if (!Array.isArray(list)) throw new Error(`${origin} must contain an array of effects, or an { "effects": [...] } object.`)
 
   return list.map((entry) => {
-    if (typeof entry === 'string') return toEffect(entry)
+    if (typeof entry === 'string') return parseSpec(entry)
     const { effect, preset, ...options } = entry as Record<string, unknown>
     const name = String(effect ?? preset ?? '')
-    const meta = resolve(name)
-    if (meta === null) throw new Error(`${origin}: unknown effect "${name}".`)
-    return meta.create(normalizeKeys(options))
+    if (resolve(name) === null) throw new Error(`${origin}: unknown effect "${name}".`)
+    return { name, options: normalizeKeys(options) }
   })
 }
+
+export const fromConfig = (contents: string, origin: string): readonly Effect[] =>
+  readConfig(contents, origin).map(build)
